@@ -1,4 +1,5 @@
 📚 CourseMaster
+
 🚀 Introduction
 
 CourseMaster is a powerful course management platform that simplifies the way students, teachers, and administrators interact. Designed for efficiency, it offers easy-to-use tools for managing courses, enrollments, and tracking student progress.
@@ -14,23 +15,15 @@ To get started with CourseMaster locally, follow these steps:
 
     Clone the repository:
 
-    bash
-
 git clone https://github.com/Aymenkenway/coursemaster_backend.git
 
 Navigate to the project directory:
-
-bash
 
 cd coursemaster_backend
 
 Install the dependencies:
 
-bash
-
 npm install
-
-bash
 
     npm start
 
@@ -63,19 +56,13 @@ We appreciate contributions! To contribute:
 
     Create a new branch for your feature:
 
-    bash
-
 git checkout -b feature-branch
 
 Commit your changes:
 
-bash
-
 git commit -m "Add new feature"
 
 Push to your branch:
-
-bash
 
     git push origin feature-branch
 
