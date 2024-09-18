@@ -3,6 +3,7 @@
 🚀 Introduction
 
 CourseMaster is a powerful course management platform that simplifies the way students, teachers, and administrators interact. Designed for efficiency, it offers easy-to-use tools for managing courses, enrollments, and tracking student progress.
+
 🔗 Links
 
     Deployed Site: not deployed yet
