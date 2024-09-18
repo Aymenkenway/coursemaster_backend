@@ -1,56 +1,64 @@
 const Course = require('../models/Course')
 
-// Get all courses
+exports.createCourse = async (req, res) => {
+  try {
+    const course = new Course({
+      ...req.body,
+      teacher: req.user._id,
+    })
+    await course.save()
+
+    const teacher = await Teacher.findById(req.user._id)
+    teacher.createdCourses.push(course._id)
+    await teacher.save()
+
+    res.status(201).json({ message: 'Course created successfully' })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
+}
+
 exports.getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find().populate('teacher')
+    const courses = await Course.find()
     res.json(courses)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 }
 
-// Create a new course
-exports.createCourse = async (req, res) => {
-  try {
-    const newCourse = new Course(req.body)
-    await newCourse.save()
-    res.status(201).json(newCourse)
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-}
-
-// Get a course by ID
 exports.getCourseById = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id).populate('teacher')
-    if (!course) return res.status(404).json({ message: 'Course not found' })
+    const course = await Course.findById(req.params.courseId)
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' })
+    }
     res.json(course)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 }
 
-// Update a course by ID
 exports.updateCourse = async (req, res) => {
   try {
-    const updatedCourse = await Course.findByIdAndUpdate(
-      req.params.id,
+    const course = await Course.findByIdAndUpdate(
+      req.params.courseId,
       req.body,
       { new: true }
     )
-    res.json(updatedCourse)
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' })
+    }
+    res.json(course)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 }
 
-// Delete a course by ID
 exports.deleteCourse = async (req, res) => {
   try {
-    await Course.findByIdAndDelete(req.params.id)
-    res.json({ message: 'Course deleted' })
+    await Course.findByIdAndDelete(req.params.courseId)
+    res.status(200).json({ message: 'Course deleted successfully' })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

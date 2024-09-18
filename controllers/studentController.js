@@ -1,64 +1,68 @@
-const User = require('../models/User')
+const Student = require('../models/student')
+const Course = require('../models/Course')
 
-// Get all students
-exports.getAllStudents = async (req, res) => {
-  try {
-    const students = await User.find({ role: 'student' })
-    res.json(students)
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-}
-
-// Get a specific student by ID
-exports.getStudentById = async (req, res) => {
-  try {
-    const student = await User.findById(req.params.id)
-    if (!student || student.role !== 'student') {
-      return res.status(404).json({ message: 'Student not found' })
-    }
-    res.json(student)
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-}
-
-// Add a new student
 exports.createStudent = async (req, res) => {
   try {
-    const newStudent = new User({ ...req.body, role: 'student' })
-    await newStudent.save()
-    res.status(201).json(newStudent)
+    const student = new Student(req.body)
+    await student.save()
+    res.status(201).json({ message: 'Student created successfully' })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(400).json({ error: err.message })
   }
 }
 
-// Update student details
-exports.updateStudent = async (req, res) => {
+exports.getEnrolledCourses = async (req, res) => {
   try {
-    const updatedStudent = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+    const student = await Student.findById(req.user._id).populate(
+      'enrolledCourses'
     )
-    if (!updatedStudent || updatedStudent.role !== 'student') {
-      return res.status(404).json({ message: 'Student not found' })
-    }
-    res.json(updatedStudent)
+    res.json(student.enrolledCourses)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 }
 
-// Delete a student by ID
-exports.deleteStudent = async (req, res) => {
+exports.enrollInCourse = async (req, res) => {
   try {
-    const student = await User.findByIdAndDelete(req.params.id)
-    if (!student || student.role !== 'student') {
-      return res.status(404).json({ message: 'Student not found' })
+    const student = await Student.findById(req.user._id)
+    const course = await Course.findById(req.params.courseId)
+
+    if (!student || !course) {
+      return res.status(404).json({ error: 'Student or course not found' })
     }
-    res.json({ message: 'Student deleted' })
+
+    student.enrolledCourses.push(course._id)
+    course.students.push(student._id)
+
+    await student.save()
+    await course.save()
+
+    res.status(200).json({ message: 'Enrolled in course successfully' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+}
+
+exports.unenrollFromCourse = async (req, res) => {
+  try {
+    const student = await Student.findById(req.user._id)
+    const course = await Course.findById(req.params.courseId)
+
+    if (!student || !course) {
+      return res.status(404).json({ error: 'Student or course not found' })
+    }
+
+    student.enrolledCourses = student.enrolledCourses.filter(
+      (courseId) => courseId !== course._id
+    )
+    course.students = course.students.filter(
+      (studentId) => studentId !== student._id
+    )
+
+    await student.save()
+    await course.save()
+
+    res.status(200).json({ message: 'Unenrolled from course successfully' })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

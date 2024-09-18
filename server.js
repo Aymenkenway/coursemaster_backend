@@ -1,26 +1,42 @@
 const express = require('express')
-const connectDB = require('./config/db')
+const mongoose = require('mongoose')
+const dotenv = require('dotenv')
 const cors = require('cors')
+const courseRoutes = require('./routes/courseRoutes')
+const studentRoutes = require('./routes/studentRoutes')
+const teacherRoutes = require('./routes/teacherRoutes')
+const adminRoutes = require('./routes/adminRoutes')
+const errorMiddleware = require('./middleware/errorMiddleware')
 
-// Initialize the app
+dotenv.config()
+
 const app = express()
-
-// Load environment variables
-require('dotenv').config()
+const port = process.env.PORT || 5000
 
 // Connect to MongoDB
-connectDB() // This calls the connection function
+
+console.log(process.env.MONGODB_URI)
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error('MongoDB connection error:', err))
 
 // Middleware
-app.use(express.json())
 app.use(cors())
+app.use(express.json())
 
 // Routes
-app.use('/api/auth', require('./routes/auth'))
-app.use('/api/courses', require('./routes/courses'))
-app.use('/api/students', require('./routes/students'))
-app.use('/api/teachers', require('./routes/teachers'))
+app.use('/api/courses', courseRoutes)
+app.use('/api/students', studentRoutes)
+app.use('/api/teachers', teacherRoutes)
+app.use('/api/admin', adminRoutes)
 
-// Start server
-const PORT = process.env.PORT || 5000
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+// Error handling
+app.use(errorMiddleware)
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`)
+})

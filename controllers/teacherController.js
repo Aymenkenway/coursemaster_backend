@@ -1,58 +1,33 @@
-const User = require('../models/User')
+const Teacher = require('../models/teacher')
+const Course = require('../models/Course')
 
-// Get all teachers
-exports.getAllTeachers = async (req, res) => {
-  try {
-    const teachers = await User.find({ role: 'teacher' })
-    res.json(teachers)
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-}
-
-// Get a teacher by ID
-exports.getTeacherById = async (req, res) => {
-  try {
-    const teacher = await User.findById(req.params.id)
-    if (!teacher || teacher.role !== 'teacher') {
-      return res.status(404).json({ message: 'Teacher not found' })
-    }
-    res.json(teacher)
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-}
-
-// Add a new teacher
 exports.createTeacher = async (req, res) => {
   try {
-    const newTeacher = new User({ ...req.body, role: 'teacher' })
-    await newTeacher.save()
-    res.status(201).json(newTeacher)
+    const teacher = new Teacher(req.body)
+    await teacher.save()
+    res.status(201).json({ message: 'Teacher created successfully' })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(400).json({ error: err.message })
   }
 }
 
-// Update a teacher by ID
-exports.updateTeacher = async (req, res) => {
+exports.getMyCourses = async (req, res) => {
   try {
-    const updatedTeacher = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+    const teacher = await Teacher.findById(req.user._id).populate(
+      'createdCourses'
     )
-    res.json(updatedTeacher)
+    res.json(teacher.createdCourses)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 }
 
-// Delete a teacher by ID
-exports.deleteTeacher = async (req, res) => {
+exports.getStudentsEnrolledInCourse = async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id)
-    res.json({ message: 'Teacher deleted' })
+    const course = await Course.findById(req.params.courseId).populate(
+      'students'
+    )
+    res.json(course.students)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
