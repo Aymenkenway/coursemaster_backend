@@ -7,7 +7,9 @@ CourseMaster is a powerful course management platform that simplifies the way st
 🔗 Links
 
     Deployed Site: not deployed yet
+    -------------------------------
     Blog Article: Not done yet
+    -------------------------------
     Author LinkedIn: https://www.linkedin.com/in/aymen-benabdelaziz/
 
 ⚙️ Installation
