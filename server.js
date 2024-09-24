@@ -14,8 +14,6 @@ const app = express()
 const port = process.env.PORT || 5000
 
 // Connect to MongoDB
-
-console.log(process.env.MONGODB_URI)
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,

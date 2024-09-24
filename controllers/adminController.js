@@ -6,13 +6,12 @@ const jwt = require('jsonwebtoken')
 
 exports.createAdmin = async (req, res) => {
   try {
-    const { name, email, password } = req.body // Extract email and password
+    const { name, email, password } = req.body
 
-    // Hash the password using bcrypt
-    const saltRounds = 10 // Adjust the salt rounds as needed
+    const saltRounds = 10
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-    const admin = new Admin({ name, email, password: hashedPassword }) // Use hashed password
+    const admin = new Admin({ name, email, password: hashedPassword })
     await admin.save()
 
     res.status(201).json({ message: 'Admin created successfully' })
@@ -24,17 +23,15 @@ exports.createAdmin = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body
-    console.log(email, password)
     const admin = await Admin.findOne({ email })
-    console.log(!admin)
+
     if (!admin) {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
     const isPasswordValid = await bcrypt.compare(password, admin.password)
-    console.log(password, admin.password)
     if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalidy credentials' })
+      return res.status(401).json({ error: 'Invalid credentials' })
     }
 
     const token = jwt.sign(
