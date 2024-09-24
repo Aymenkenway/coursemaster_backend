@@ -1,7 +1,8 @@
 const Admin = require('../models/admin')
 const Student = require('../models/student')
 const Teacher = require('../models/teacher')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
+
 const jwt = require('jsonwebtoken')
 
 exports.createAdmin = async (req, res) => {
