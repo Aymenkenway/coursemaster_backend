@@ -6,7 +6,7 @@ CourseMaster is a powerful course management platform that simplifies the way st
 
 🔗 Links
 
-    Deployed Site: not deployed yet
+    Deployed Site: https://coursemasterfrontend.vercel.app/
     -------------------------------
     Blog Article: Not done yet
     -------------------------------
